@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    # 测试环境使用PostgreSQL（与开发环境保持一致）
+    # 如需使用H2内存数据库，取消下面的注释并注释掉PostgreSQL配置
+    url: jdbc:postgresql://192.168.67.132:5432/data_model?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgresql
+    
+    # H2内存数据库配置（可选）
+    # url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    # driver-class-name: org.h2.Driver
+    # username: sa
+    # password: 
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    com.example.datamodel: debug
+    org.springframework: info
+

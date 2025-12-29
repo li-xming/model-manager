@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.datamodel.mapper.LinkTypeMapper">
+
+    <select id="selectByName" resultType="com.example.datamodel.entity.LinkType">
+        SELECT *
+        FROM link_types
+        WHERE name = #{name}
+    </select>
+
+    <select id="selectByObjectTypeId" resultType="com.example.datamodel.entity.LinkType">
+        SELECT *
+        FROM link_types
+        WHERE source_object_type_id = #{objectTypeId}
+           OR target_object_type_id = #{objectTypeId}
+    </select>
+
+</mapper>
+

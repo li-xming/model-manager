@@ -1,0 +1,82 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: data-model-platform
+  
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.22.212:5433/data_model?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&stringType=unspecified
+    username: postgres
+    password: postgresql
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DataModelHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+  redis:
+    host: 192.168.22.212
+    port: 6389
+    password: 123456
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+
+# MyBatis Plus配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    jdbc-type-for-null: 'null'
+    call-setters-on-nulls: true
+    type-handlers-package: com.example.datamodel.typehandler
+  global-config:
+    db-config:
+      id-type: assign_uuid
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.example.datamodel.entity
+
+# Knife4j配置
+knife4j:
+  enable: true
+  openapi:
+    title: 数据模型管理平台 API文档
+    description: 基于Palantir Foundry本体论理念的数据模型管理平台
+    email: support@example.com
+    concat: DataModel Team
+    url: https://www.example.com
+    version: v1.0.0
+    license: MIT
+    license-url: https://www.apache.org/licenses/LICENSE-2.0.html
+    terms-of-service-url: https://www.example.com/terms
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - com.example.datamodel.controller
+
+# 日志配置
+logging:
+  level:
+    com.example.datamodel: debug
+    org.springframework: info
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"
+

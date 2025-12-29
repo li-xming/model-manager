@@ -1,0 +1,776 @@
+@startuml 省中心联网收费业务实体关系图
+skinparam linetype ortho
+hide circle
+
+' 法人车主与自然人车主是否独立建模
+entity User as "车主" {
+  ' 车主编号
+  * id : string
+  --
+  ' 机动车所有人姓名
+  ownerName : string
+  ' 机动车所有人证件类型
+  ownerIdType : string
+  ' 机动车所有人证件号
+  ownerIdNum : string
+  ' 录入方式，1-线上，2-线下
+  registeredType : integer
+  ' 录入渠道编号
+  channelId : string
+  ' 录入时间
+  registeredTime : string
+  ' 机动车所有人联系电话
+  ownerTel : string
+  ' 机动车所有人地址
+  address : string
+  ' 指定联系人姓名，法人客户独有
+  contact : string
+  ' 道路运输证编号，法人客户独有
+  transportIdNum : string
+  ' 经营许可证编号，法人客户独有
+  licenseIdNum : string
+}
+
+entity Vehicle as "车辆" {
+  ' 车辆编号，由车牌号码+间隔符+车牌颜色组成
+  * id : string
+  --
+  ' 车牌号码
+  plateNum : string
+  ' 车牌颜色，2位数字
+  plateColor : integer
+  ' 收费车型，整数
+  type : integer
+  ' 行驶证车辆类型
+  vehicleType : string
+  ' 行驶证品牌型号
+  vehicleModel : string
+  ' 车辆使用性质
+  useCharacter : string
+  ' 车辆识别代号
+  VIN : string
+  ' 车辆发动机号
+  engineNum : string
+  ' 注册日期
+  registerDate : string
+  ' 发证日期
+  issueDate : string
+  ' 档案编号
+  fileNum : string
+  ' 核定载人数
+  approvedCount : integer
+  ' 总质量，Kg
+  totalMass : integer
+  ' 整备质量，Kg
+  maintenanceMass : integer
+  ' 核定载质量，Kg
+  permittedWeight : integer
+  ' 外廓尺寸
+  outsideDimensions : string
+  ' 准牵引总质量，Kg
+  permittedTowWeight : integer
+  ' 检验记录
+  testRecord : string
+  ' 车轮数
+  wheelCount : integer
+  ' 车轴数
+  axleCount : integer
+  ' 轴距，mm
+  axleDistance : integer
+  ' 轴型
+  axlsType : string
+  ' 录入方式，1-线上，2-线下
+  registeredType : integer
+  ' 录入渠道编号
+  channelId : string
+  ' 录入时间
+  registeredTime : string
+  ' 所属客户信息编号
+  userId : string
+  ' OBU编号
+  obuId : string
+  ' 前后装标识，1-前装2-后装
+  vehicleSign : integer
+  ' 关联账户编号
+  accountNumber : string
+}
+
+entity Medium as "通行介质" {
+  ' 通行介质编号
+  * id : string
+  --
+  ' 通行介质类型
+  type : string
+  ' 渠道编号
+  channelId : string
+  ' 车牌号码
+  plateNum : string
+  ' 车牌颜色
+  plateColor : integer
+  ' 状态
+  status : integer
+  ' 启用时间
+  enableTime : date
+  ' 到期时间
+  expireTime : date
+}
+
+entity TollRoad as "收费公路" {
+  ' 收费公路编号，由公路编号和省域编号组成
+  * id : string
+  --
+  ' 公路编号
+  roadNum : string
+  ' 省域编号，2位数字
+  provinceId : string
+  ' 收费公路名称
+  name : string
+  ' 技术等级
+  level : integer
+  ' 起始计费位置地点
+  startSite : string
+  ' 起始位置桩号
+  startStakeNum : string
+  ' 起始计费位置纬度
+  startLat : string
+  ' 起始计费位置经度
+  startLng : string
+  ' 起点收费站编号
+  startStationId : string
+  ' 终止计费位置地点
+  endSite : string
+  ' 终止位置桩号
+  endStakeNum : string
+  ' 终止计费位置纬度
+  endLat : string
+  ' 终止计费位置经度
+  endLng : string
+  ' 终点收费站编号
+  endStationId : string
+}
+
+entity SectionOwner as "路段业主" {
+  ' 收费公路业主编号，由省域编号+参与方类型+业主顺序码组成
+  * id : string
+  --
+  ' 省域编号，2位数字
+  provinceId : string
+  ' 参与方类型，2位数字
+  type : string
+  ' 业主顺序码，3位数字
+  num : string
+  ' 业主单位名称
+  name : string
+  ' 联系人姓名
+  contact : string
+  ' 联系电话
+  tel : string
+  ' 地址
+  address : string
+  ' 开户行
+  bank : string
+  ' 开户行地址
+  bankAddr : string
+  ' 开户行账号
+  bankAccount : string
+  ' 纳税人识别号
+  taxpayerCode : string
+  ' 统一社会信用代码/组织机构代码证号
+  creditCode : string
+}
+
+entity Section as "收费路段" {
+  ' 收费路段编号，收费路段编号=收费公路编号+收费路段顺序码+保留位
+  * id : string
+  --
+  ' 收费公路编号
+  tollRoadId : string
+  ' 收费路段顺序码，3位数字
+  num : string
+  ' 保留位，1位数字默认为"0"
+  reservedNum : string
+  ' 收费路段名称
+  name : string
+  ' 路段性质，1-经营性2-还贷性
+  type : integer
+  ' 路段里程，单位：m
+  length : integer
+  ' 联网收费状态，1-联网收费2-独立收费
+  online : integer
+  ' 起始计费位置纬度
+  startLat : string
+  ' 起始计费位置经度
+  startLng : string
+  ' 起始计费位置桩号
+  startStakeNum : string
+  ' 终止计费位置桩号
+  endStakeNum : string
+  ' 终止计费位置纬度
+  endLat : string
+  ' 终止计费位置经度
+  endLng : string
+  ' 是否纳税，1-是2-否
+  tax : integer
+  ' 税率
+  taxRate : string
+  ' 所属业主编号
+  sectionOwnerId : string
+  ' 路段收费方式，1-开放式2-封闭式
+  chargeType : integer
+  ' 重合收费公路编号
+  tollRoads : string
+  ' 开工时间
+  builtTime : string
+  ' 通车时间
+  startTime : string
+  ' 停止收费时间
+  endTime : string
+  ' 待用税率
+  nextTaxRate : string
+  ' 待用税率生效时间
+  nextRateDate : string
+}
+
+entity TollStation as "收费站" {
+  ' 收费站编号，收费站编号=收费路段编号+收费站顺序码+保留位
+  * id : string
+  --
+  ' 收费路段编号
+  sectionId : string
+  ' 收费站顺序码，2位数字
+  num : string
+  ' 保留位，1位数字默认为"0"
+  reservedNum : string
+  ' 收费站名称
+  name : string
+  ' 收费广场数量
+  tollPlazaCount : integer
+  ' 收费站HEX字符串
+  stationHex : string
+
+  ' 线路类型
+  lineType : string
+  ' 网络所属运营商
+  operators : string
+  ' 数据汇聚点
+  dataMergePoint : string
+  ' IMEI号
+  imei : string
+  ' 接入设备ip
+  ip : string
+  ' snmp协议版本号
+  snmpVersion : string
+  ' snmp端口
+  snmpPort : integer
+  ' 团体名称
+  community : string
+  ' 用户名
+  securityName : string
+  ' 安全级别
+  securityLevel : string
+  ' 认证协议
+  authentication : string
+  ' 认证密钥
+  authKey : string
+  ' 加密算法
+  encryption : string
+  ' 加密密钥
+  secretKey : string
+  ' 站级服务器厂商代码
+  serverManuID : string
+  ' 站级服务器操作系统名称
+  serversysName : string
+  ' 站级服务器操作系统版本号
+  serversysVer : string
+  ' 站级服务器数据库系统版本号
+  serverDateVer : string
+  ' 类型，1-省界站2-普通站
+  type : integer
+  ' 状态，1-在建2-运行3-撤销4-停用
+  status : integer
+  ' 实体类型，1-实体2-虚拟
+  realType : integer
+  ' 所在地级市
+  regionName : string
+  ' 所在区县名称
+  countryName : string
+  ' 区县六位行政区划编码
+  regionalismCode : string
+  ' 代收门架编号
+  agencyGantryIds : string
+}
+
+entity TollPlaza as "收费广场" {
+  ' 收费广场编号，收费广场编号=收费站编号+收费广场类型+收费广场顺序码+保留位
+  * id : string
+  --
+  ' 收费站编号
+  tollStationId : string
+  ' 收费广场类型
+  type : integer
+  ' 收费车道顺序码，2位数字
+  num : string
+  ' 保留位，1位数字默认为"0"
+  reservedNum : string
+  ' 潮汐车道反向时间
+  tidalTime : string
+  ' 起始日期
+  startTime : string
+  ' 终止日期
+  endTime : string
+  ' 使用状态，1-停用2-在用
+  status : integer
+  ' 车道HEX字符串
+  laneHex : string
+  ' RSU厂商代码
+  rsuManUID : string
+  ' RSU型号
+  rsuModel : string
+  ' RSU编号
+  rsuID : string
+  ' 出入口类型，1-入口2-出口3-潮汐
+  entryExitType : integer
+  ' 车道栏杆位置，1-前2-中3-后9-无
+  railingPos : integer
+  ' 是否有治超，1-有2-无
+  ifContainLimitWeight : integer
+  ' 牌识厂商代码
+  VPLRManUID : string
+}
+
+' 门架、车道、收费广场、收费站有多种设备，设备厂商独立建模，通过多对多关系链接
+' 设备信息缺少采集项，如厂商名称，联系电话等，部中心维护档案，省中心没有
+' 新增设备厂商信息可以在设备故障时，通过系统快速联系厂家报修，建立起维护台账，为采购提供决策依据
+entity TollGantry as "收费门架" {
+  ' 收费门架编号，收费门架编号=收费单元编号+顺序码+保留位
+  * id : string
+  --
+  ' 收费单元编号
+  tollIntervalId : string
+  ' 顺序码，2位数字
+  num : string
+  ' 保留位，1位数字默认为"0"
+  reservedNum : string
+  ' 门架类型，0-路段收费门架1-省界收费门架
+  type : integer
+  ' 省界入/出口标识，1-省界入口2-省界出口
+  boundaryType : integer
+  ' 门架标志
+  gantrySign : string
+  ' 收费单元编码组合，门架代收其他收费单元时，收费单元编码以管道符“｜”分割
+  tollIntervals : string
+  ' 纬度
+  lat : string
+  ' 经度
+  lng : string
+  ' 桩号
+  pileNumber : string
+  ' 使用状态，1-停用2-在用
+  status : integer
+  ' 起始日期
+  startTime : string
+  ' 终止日期
+  endTime : string
+  ' ETC门架的HEX字符串
+  etcGantryHex : string
+  ' 门架种类，1-实体门架2-虚拟门架
+  gantryType : integer
+  ' 车道数
+  laneCount : string
+  ' 反向门架HEX字符串
+  reEtcGantryHex : string
+  ' 代收门架编号
+  agencyGantryIds : string
+
+  ' 门架的RSU厂商代码
+  rsuManUID : string
+  ' 门架的RSU型号
+  rsuModel : string
+  ' 门架的RSU编号
+  rsuID : string
+
+  ' 门架的高清车牌识别设备厂商代码
+  VPLRUID : string
+  ' 门架的高清车牌识别设备型号
+  VPLRModel : string
+  ' 门架的高清车牌识别设备编号
+  VPLRID : string
+
+  ' 门架的高清摄像机设备厂商代码
+  HDVUID : string
+  ' 门架的高清摄像机设备型号
+  HDVModel : string
+  ' 门架的高清摄像机设备编号
+  HDVID : string
+
+  ' 门架控制机设备厂商代码
+  controllerUID : string
+  ' 门架控制机设备型号
+  controllerModel : string
+  ' 门架控制机设备编号
+  controllerID : string
+  ' 门架控制机操作系统软件版本
+  controllerSysVer : string
+
+  ' 门架服务器设备厂商代码
+  serverUID : string
+  ' 门架服务器设备型号
+  serverModel : string
+  ' 门架服务器设备编号
+  serverID : string
+  ' 门架服务器操作系统软件版本
+  serverSysVer : string
+  ' 门架服务器数据库系统软件版本
+  serverDBVer : string
+
+  ' 门架的车辆检测器设备厂商代码
+  vehDetectorUID : string
+  ' 门架的车辆检测器设备型号
+  vehDetectorModel : string
+  ' 门架的车辆检测器设备编号
+  vehDetectorID : string
+
+  ' 门架的车辆气象检测设备厂商代码
+  weatherDetectorUID : string
+  ' 门架的气象检测设备型号
+  weatherDetectorModel : string
+  ' 门架的气象检测设备编号
+  weatherDetectorID : string
+
+  ' 门架的车型检测设备厂商代码
+  classDetectorUID : string
+  ' 门架的车型检测设备型号
+  classDetectorModel : string
+  ' 门架的车型检测设备编号
+  classDetectorID : string
+
+  ' 门架的断面称重检测设备厂商代码
+  loadDetectionUID : string
+  ' 门架的断面称重检测设备型号
+  loadDetectionModel : string
+  ' 门架的断面称重检测设备编号
+  loadDetectionID : string
+
+  ' 门架的温控设备厂商代码
+  tempControllerUID : string
+  ' 门架的温控设备型号
+  tempControllerModel : string
+  ' 门架的温控设备编号
+  tempControllerID : string
+
+  ' 门架的供电设备厂商代码
+  powerControllerUID : string
+  ' 门架的供电设备型号
+  powerControllerModel : string
+  ' 门架的供电设备编号
+  powerControllerID : string
+
+  ' 门架的安全接入设备厂商代码
+  safeEquipUID : string
+  ' 门架的安全接入设备型号
+  safeEquipModel : string
+  ' 门架的安全接入设备编号
+  safeEquipID : string
+  
+  ' 线路类型
+  lineType : string
+  ' 网络所属运营商
+  operators : string
+  ' 数据汇聚点
+  dataMergePoint : string
+  ' IMEI号
+  imei : string
+  ' 接入设备ip
+  ip : string
+  ' snmp协议版本号
+  snmpVersion : string
+  ' snmp端口
+  snmpPort : integer
+  ' 团体名称
+  community : string
+  ' 用户名
+  securityName : string
+  ' 安全级别
+  securityLevel : string
+  ' 认证协议
+  authentication : string
+  ' 认证密钥
+  authKey : string
+  ' 加密算法
+  encryption : string
+  ' 加密密钥
+  secretKey : string
+}
+
+entity TollInterval as "收费单元" {
+  ' 收费断面编号，收费单元编号=收费路段编号+收费单元顺序码+上下行+保留位
+  * id : string
+  --
+  ' 收费路段编号
+  sectionId : string
+  ' 收费单元顺序码，3位数字
+  num : string
+  ' 上下行，1-上行2-下行
+  direction : integer
+  ' 保留位，1位数字默认为"0"
+  reservedNum : string
+  ' 收费单元名称
+  name : string
+  ' 所在路段性质，1-经营性2-还贷性
+  type : integer
+  ' 起止里程，单位：m
+  length : integer
+  ' 起始计费位置纬度
+  startLat : string
+  ' 起始计费位置经度
+  startLng : string
+  ' 起始计费位置桩号
+  startStakeNum : string
+  ' 终止计费位置桩号
+  endStakeNum : string
+  ' 终止计费位置纬度
+  endLat : string
+  ' 终止计费位置经度
+  endLng : string
+  ' 重合收费公路编号
+  tollRoads : string
+  ' 停止收费时间
+  endTime : string
+  ' 省界标识，0-非省界1-省界
+  provinceType : integer
+  ' 开始收费时间
+  beginTime : string
+  ' 收费单元类型，1-实体2-虚拟
+  verticalSectionType : integer
+}
+
+entity TollLane as "收费车道" {
+  ' 收费车道编号，收费车道编号=收费广场编号+收费车道顺序码+保留位
+  * id : string
+  --
+  ' 收费广场编号
+  tollPlazaId : string
+  ' 收费车道顺序码，2位数字
+  num : string
+  ' 保留位，1位数字默认为"0"
+  reservedNum : string
+  ' 车道类型，1-ETC2-MTC3-混合
+  type : integer
+  ' 潮汐车道反向时间
+  tidalTime : string
+  ' 起始日期
+  startTime : string
+  ' 终止日期
+  endTime : string
+  ' 使用状态，1-停用2-在用
+  status : integer
+  ' 车道HEX字符串
+  laneHex : string
+  ' RSU厂商代码
+  rsuManUID : string
+  ' RSU型号
+  rsuModel : string
+  ' RSU编号
+  rsuID : string
+  ' 出入口类型，1-入口2-出口3-潮汐
+  entryExitType : integer
+  ' 车道栏杆位置，1-前2-中3-后9-无
+  railingPos : integer
+  ' 是否有治超，1-有2-无
+  ifContainLimitWeight : integer
+  ' 牌识厂商代码
+  VPLRManUID : string
+}
+
+entity Transaction as "交易流水" {
+  ' 交易流水编号
+  * id : string
+  --
+  ' 标识点标识
+  identifyPointId : string
+  ' 标识点Hex码
+  identifyPointHex : string
+  ' 通行标识
+  passId : string
+  ' 通行介质编号
+  mediumId : string
+  ' 介质类型
+  mediaType : integer
+  ' 出口收费类型
+  exitFeeType : integer
+  ' 省份编号
+  provinceId : integer
+  ' 交易时间
+  transTime : date
+  ' 车牌号码
+  plateNum : string
+  ' 车牌颜色
+  plateColor : integer
+  ' 支付费用
+  payFee : long
+  ' 费用
+  fee : long
+  ' 优惠费用
+  discountFee : long
+  ' 收费单元编号，多个编号使用“｜”隔开
+  intervals : string
+  ' 收费单元费用，多个费用使用“｜”隔开
+  fee : string
+  ' 收费单元支付费用，多个费用使用“｜”隔开
+  payFee : string
+  ' 收费单元优惠费用，多个费用使用“｜”隔开
+  discountFee : string
+}
+
+entity Path as "车辆通行路径" {
+  ' 车辆通行路径标识
+  * id : string
+  --
+  ' 通行标识
+  passId : string
+  ' 车牌号码
+  plateNum : string
+  ' 车牌颜色
+  plateColor : integer
+  ' 入口时间
+  enTime : date
+  ' 出口时间
+  exTime : date
+  ' 入口车道编号
+  enTollLaneId : string
+  ' 出口车道编号
+  exTollLaneId : string
+  ' 入口收费站编号
+  enTollStationId : string
+  ' 出口收费站编号
+  exTollStationId : string
+}
+
+entity PathDetail as "车辆通行路径明细" {
+  ' 交易标识
+  * id : string
+  --
+  ' 车辆通行路径标识
+  pathId : string
+  ' 通行标识
+  passId : string
+  ' 车牌号码
+  plateNum : string
+  ' 车牌颜色
+  plateColor : integer
+  ' 标识点标识
+  identifyPointId : string
+  ' 标识点Hex码
+  identifyPointHex : string
+  ' 收费单元编号，多个编号使用“｜”隔开
+  intervals : string
+  ' 收费单元费用，多个费用使用“｜”隔开
+  fee : string
+  ' 收费单元支付费用，多个费用使用“｜”隔开
+  payFee : string
+  ' 收费单元优惠费用，多个费用使用“｜”隔开
+  discountFee : string
+  ' 交易时间
+  transTime : date
+}
+
+entity RestorePath as "车辆通行拟合路径" {
+  ' 车辆拟合路径标识
+  * id : string
+  --
+  ' 通行标识
+  passId : string
+  ' 车牌号码
+  plateNum : string
+  ' 车牌颜色
+  plateColor : integer
+  ' 入口时间
+  enTime : date
+  ' 出口时间
+  exTime : date
+  ' 入口车道编号
+  enTollLaneId : string
+  ' 出口车道编号
+  exTollLaneId : string
+  ' 入口收费站编号
+  enTollStationId : string
+  ' 出口收费站编号
+  exTollStationId : string
+}
+
+entity RestorePathDetail as "车辆通行拟合路径明细" {
+  ' 交易标识
+  * id : string
+  --
+  ' 车辆拟合路径标识
+  restorePathId : string
+  ' 通行标识
+  passId : string
+  ' 车牌号码
+  plateNum : string
+  ' 车牌颜色
+  plateColor : integer
+  ' 标识点标识
+  identifyPointId : string
+  ' 标识点Hex码
+  identifyPointHex : string
+  ' 收费单元编号，多个编号使用“｜”隔开
+  intervals : string
+  ' 收费单元费用，多个费用使用“｜”隔开
+  fee : string
+  ' 收费单元支付费用，多个费用使用“｜”隔开
+  payFee : string
+  ' 收费单元优惠费用，多个费用使用“｜”隔开
+  discountFee : string
+  ' 交易时间
+  transTime : date
+}
+
+entity SplitDetail as "拆分明细" {
+  ' 通行标识
+  * passId : string
+  --
+  ' 交易编号
+  transactionId : string
+  ' 收费单元编号
+  intervalId : string
+  ' 收费单元费用
+  tollIntervalFee : string
+  ' 收费单元支付费用
+  tollIntervalPayFee : string
+  ' 收费单元优惠费用
+  tollIntervalDiscountFee : string
+}
+
+User "1" ||--o{ "n" Vehicle : "拥有(id -> userId)"
+
+Vehicle "1" ||--|| "n" Medium : "持有(obuId -> id)"
+Vehicle "1" ||--o{ "n" Transaction : "关联(plateNum,plateColor -> plateNum,plateColor)"
+
+TollRoad "1" ||--o{ "n" Section : "包含(id -> tollRoadId)"
+SectionOwner  "1" ||--o{ "n" Section : "管理(id -> sectionOwnerId)"
+Section "1" ||--o{ "n" TollStation : "包含(id -> sectionId)"
+Section "1" ||--o{ "n" TollInterval : "包含(id -> sectionId)"
+TollStation "1" ||--o{ "n" TollPlaza : "包含(id -> tollStationId)"
+TollPlaza "1" ||--o{ "n" TollLane : "包含(id -> tollPlazaId)"
+
+TollGantry "1" ||--o{ "n" TollInterval : "所在收费单元是(tollIntervalId -> id)"
+' 实际建模时，代收关系可以由收费单元记录收费门架标识来进行关联，此处以生产数据关系标注
+TollGantry "1" ||--o{ "n" TollInterval : "代收(tollIntervals -> id)"
+
+TollLane "1" ||--o{ "n" Transaction : "生成(id -> identifyPointId)"
+TollGantry "1" ||--o{ "n" Transaction : "生成(id -> identifyPointId)"
+
+' 根据交易中的passId、plateNum、plateColor将同一辆车的交易流水进行聚合
+Transaction "n" ||--o{ "1" Path : "汇聚为(函数计算)"
+Path "1" ||--o{ "n" PathDetail : "持有(id -> pathId)"
+
+' 将已聚合的交易流水按交易时间排序，通过收费门架Hex码的连续性来验证交易连续性，相同门架流水交易时间小于5分钟则认为是同一门架，去重保留最新门架交易
+Path "1" ||--o{ "1" RestorePath : "拟合为(函数计算)"
+RestorePath "1" ||--o{ "n" RestorePathDetail : "持有(id -> RestorePathId)"
+
+' 根据路径明细中的收费单元信息进行拆分，计算每个收费单元拆到的钱，四舍五入可能存在差额，从后往前调整收费金额最大的收费单元来平补差额
+RestorePath "1" ||--o{ "n" SplitDetail : "拆分为(passId -> passId)"
+TollInterval "1" ||--|| "1" SplitDetail : "关联(id -> intervalId)"
+
+@enduml

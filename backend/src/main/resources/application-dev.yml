@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://192.168.22.212:5433/data_model?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+  redis:
+    host: 192.168.22.212
+    port: 6389
+
+logging:
+  level:
+    com.example.datamodel: debug
+
